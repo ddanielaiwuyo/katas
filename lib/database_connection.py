@@ -10,7 +10,7 @@ from psycopg.rows import dict_row
 # That's why we have provided it!
 class DatabaseConnection:
     # VVV CHANGE BOTH OF THESE VVV
-    DEV_DATABASE_NAME = "DEFAULT_MAKERS_PROJECT"
+    DEV_DATABASE_NAME = "http_challenge_1"
     TEST_DATABASE_NAME = "DEFAULT_MAKERS_PROJECT_TEST"
 
     def __init__(self, test_mode=False):
@@ -22,7 +22,7 @@ class DatabaseConnection:
     def connect(self):
         try:
             self.connection = psycopg.connect(
-                f"postgresql://localhost/{self._database_name()}",
+                f"postgresql://localhost/{self._database_name().lower()}",
                 row_factory=dict_row)
         except psycopg.OperationalError:
             raise Exception(f"Couldn't connect to the database {self._database_name()}! " \
@@ -32,6 +32,9 @@ class DatabaseConnection:
     # We use it to set up our database ready for our tests or application.
     def seed(self, sql_filename):
         self._check_connection()
+        print("\n\n!!!!!!checking seed->", sql_filename)
+        print(os.path.exists(sql_filename))
+        print("\n\n\n\n")
         if not os.path.exists(sql_filename):
             raise Exception(f"File {sql_filename} does not exist")
         with self.connection.cursor() as cursor:
@@ -65,8 +68,10 @@ class DatabaseConnection:
     # This private method returns the name of the database we should use.
     def _database_name(self):
         if self.test_mode:
+            print(" [INFO] started in test mode")
             return self.TEST_DATABASE_NAME
         else:
+            print(" [INFO] started in dev mode")
             return self.DEV_DATABASE_NAME
 
 # This function integrates with Flask to create one database connection that

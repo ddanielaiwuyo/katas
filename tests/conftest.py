@@ -12,6 +12,12 @@ def db_connection():
     conn.connect()
     return conn
 
+@pytest.fixture
+def my_conn():
+    conn = DatabaseConnection(test_mode=False)
+    conn.connect() 
+    return conn
+
 # This fixture starts the test server and makes it available to the tests.
 # You don't need to understand it in detail.
 @pytest.fixture
