@@ -32,9 +32,6 @@ class DatabaseConnection:
     # We use it to set up our database ready for our tests or application.
     def seed(self, sql_filename):
         self._check_connection()
-        print("\n\n!!!!!!checking seed->", sql_filename)
-        print(os.path.exists(sql_filename))
-        print("\n\n\n\n")
         if not os.path.exists(sql_filename):
             raise Exception(f"File {sql_filename} does not exist")
         with self.connection.cursor() as cursor:

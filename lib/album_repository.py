@@ -74,7 +74,6 @@ class AlbumRepository:
 
         results = []
         for row in response:
-            print("\n\n ", row )
             album_artist = AlbumArtist(row["album_id"], row["title"], row["release_year"], row["artist_name"], row["genre"])
             results.append(album_artist)
 
