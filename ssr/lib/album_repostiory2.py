@@ -44,7 +44,6 @@ class AlbumRepository:
 
         album = Album(row["id"], row["album_title"], row["release_year"], None)
         album.artist_name = row["artist_name"]
-        album.release_year = album.release_year
         return album
 
     def create_album(self, artist_name, album: Album) -> bool:
@@ -57,12 +56,9 @@ class AlbumRepository:
         if len(artist_id) == 0:
             return False
 
-        print(f"\n\n artist id -> {artist_id}")
-
         insert = self.conn.execute(
             insert_query, [album.title, album.release_year, artist_id[0]["id"]]
         )
-        print("insert from db", insert)
         return True
 
 
