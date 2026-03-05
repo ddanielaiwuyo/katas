@@ -25,7 +25,7 @@ class AlbumRepository:
             albums.append(album)
         return albums
 
-    def find_album(self, id) -> Album:
+    def find_album(self, id) -> Album | None:
         query = """
         SELECT albums.id,
         albums.title as album_title,
@@ -38,11 +38,16 @@ class AlbumRepository:
         """
         query_result = self.conn.execute(query, [id])
         if query_result is None or len(query_result) == 0:
-            return query_result
+            return None
         
         row = query_result[0]
+        # if row is None:
+        #     print("schema here", row)
+        #     return None
+
         album = Album(row["id"], row["album_title"], row["release_year"],  None )
         album.artist_name = row["artist_name"]
+        album.release_year = album.release_year
         return album
 
     def create_album(self, artist_name, album: Album) -> bool:
