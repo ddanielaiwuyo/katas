@@ -1,5 +1,6 @@
 from lib.entities import Album
 
+
 class AlbumRepository:
     def __init__(self, db_conn):
         self.conn = db_conn
@@ -15,7 +16,7 @@ class AlbumRepository:
         on albums.artist_id = artists.id
         """
         query_result = self.conn.execute(query)
-        if query_result is None: # need a way to handle this
+        if len(query_result) == 0: 
             return query_result
         albums = []
         for row in query_result:
@@ -38,17 +39,17 @@ class AlbumRepository:
         query_result = self.conn.execute(query, [id])
         if query_result is None or len(query_result) == 0:
             return None
-        
+
         row = query_result[0]
 
-        album = Album(row["id"], row["album_title"], row["release_year"],  None )
+        album = Album(row["id"], row["album_title"], row["release_year"], None)
         album.artist_name = row["artist_name"]
         album.release_year = album.release_year
         return album
 
     def create_album(self, artist_name, album: Album) -> bool:
         id_query = """ select id from artists where artists.name = %s"""
-        insert_query  = """
+        insert_query = """
         insert into albums (title, release_year, artist_id)
         values (%s, %s, %s)
         """
@@ -58,12 +59,16 @@ class AlbumRepository:
 
         print(f"\n\n artist id -> {artist_id}")
 
-        insert = self.conn.execute(insert_query, [ album.title, album.release_year, artist_id[0]["id"]])
+        insert = self.conn.execute(
+            insert_query, [album.title, album.release_year, artist_id[0]["id"]]
+        )
         print("insert from db", insert)
         return True
 
+
 def main():
     from lib.database_connection import DatabaseConnection
+
     db_conn = DatabaseConnection()
     db_conn.DEV_DATABASE_NAME = "music_library"
     db_conn.connect()
@@ -78,10 +83,11 @@ def main():
     print(al)
 
     bum = Album(None, "Undercurrent", "1962-01-01")
-    artist = 'Conways Game'
+    artist = "Conways Game"
     created = repo.create_album(artist, bum)
     if not created:
         print("artist doesnt exist")
+
 
 if __name__ == "__main__":
     main()
