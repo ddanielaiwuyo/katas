@@ -19,7 +19,6 @@ class AlbumRepository:
             return query_result
         albums = []
         for row in query_result:
-            print(f"\n{row}\n")
             album = Album(row["id"], row["album_title"], row["release_year"], None)
             album.artist_name = row["artist_name"]
             albums.append(album)
@@ -41,9 +40,6 @@ class AlbumRepository:
             return None
         
         row = query_result[0]
-        # if row is None:
-        #     print("schema here", row)
-        #     return None
 
         album = Album(row["id"], row["album_title"], row["release_year"],  None )
         album.artist_name = row["artist_name"]
