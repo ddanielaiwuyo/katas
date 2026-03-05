@@ -49,7 +49,9 @@ def apply_example_routes(app):
 
         # Check for validity and if not valid, show the form again with errors
         if not book.is_valid():
-            return render_template('books/new.html', book=book, errors=book.generate_errors()), 400
+            return render_template(
+                    'books/new.html',
+                    book=book, errors=book.generate_errors()), 400
 
         # Save the book to the database
         book = repository.create(book)
