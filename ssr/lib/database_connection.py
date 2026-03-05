@@ -11,6 +11,7 @@ from psycopg.rows import dict_row
 class DatabaseConnection:
     # VVV CHANGE BOTH OF THESE VVV
     DEV_DATABASE_NAME = "http_challenge_1"
+    # DEV_DATABASE_NAME = "http_challenge_1"
     TEST_DATABASE_NAME = "DEFAULT_MAKERS_PROJECT_TEST"
 
     def __init__(self, test_mode=False):
