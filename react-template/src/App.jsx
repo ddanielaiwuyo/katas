@@ -5,6 +5,11 @@ import makersLogo from "./assets/Makers-Logo.png";
 import "./App.css";
 
 function App() {
+	const gig = {
+		bandName: "Childish Gambino",
+		description: "Cool tracks and tunes, especially the sample of LES and the Earth PianoTuner"
+	}
+	
 	return (
 		<>
 			<Hello name="World" />
@@ -13,7 +18,7 @@ function App() {
 			<Post post="Do you know you else says `ughh`" postedBy="ogmuscleman_" />
 
 
-			<Gig bandName="Awesome" />
+			<Gig gig={gig} />
 		</>
 	);
 }
