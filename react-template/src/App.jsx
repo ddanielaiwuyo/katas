@@ -1,24 +1,31 @@
-import Hello from "./components/Hello";
-import Post from "./components/Post";
 import Gig from "./components/Display";
-import makersLogo from "./assets/Makers-Logo.png";
 import "./App.css";
 
 function App() {
-	const gig = {
-		bandName: "Childish Gambino",
-		description: "Cool tracks and tunes, especially the sample of LES and the Earth PianoTuner"
-	}
-	
+	const gigs = [
+		{
+			id: 0,
+			bandName: "Childish Gambino",
+			description: "Cool tracks and tunes, especially the sample of LES and the Earth PianoTuner",
+			hostedAt: "Cool Island",
+		},
+		{
+			id: 1,
+			bandName: "MiheroMiraha",
+			description: "Nice Vibrant Tracks",
+			hostedAt: "Mordecai Rigby Park",
+		},
+		{
+			id: 2,
+			bandName: "Lamine Vacouver",
+			description: "Native Drums of Pocahontas",
+			hostedAt: "Karavan Horatiii",
+		}
+	]
+
 	return (
 		<>
-			<Hello name="World" />
-			<img className="logo" src={makersLogo}></img>
-
-			<Post post="Do you know you else says `ughh`" postedBy="ogmuscleman_" />
-
-
-			<Gig gig={gig} />
+			<Gig gigs={gigs}/>
 		</>
 	);
 }
