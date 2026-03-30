@@ -1,3 +1,8 @@
+/**
+ * @props {string} name
+ * @props {string} description
+ * @props {num} price
+ * */
 function Product(props) {
 	return (
 		<div className="product-container">
