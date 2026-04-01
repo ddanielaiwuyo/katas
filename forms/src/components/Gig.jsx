@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import "./Gig.css"
 
 async function makeRequest() {
 	const url = "https://makers-gig-backend.onrender.com/events"
@@ -14,7 +15,7 @@ function Card(props) {
 	const { gig } = props
 	return (<>
 		<div className="card-container" >
-			<p className="band-name">Band Name: {gig.band_name}</p>
+			<p className="band-name">{gig.band_name}</p>
 			<p>{props.gig.description}</p>
 			<p>Time: {new Date(gig.time).toDateString()}</p>
 		</div>
@@ -22,6 +23,7 @@ function Card(props) {
 }
 
 
+// Try to use createContext
 function Main() {
 	const [data, updateData] = useState([])
 	const [favourites, updateFavourites] = useState([])
@@ -33,10 +35,7 @@ function Main() {
 				const nonFavourites = []
 
 				response.forEach((gig) => {
-					if (gig.event_id && gig.event_id % 2 == 0) {
-						gig.favourited = true
-					}
-					if (gig.favourited) {
+					if (gig.event_id && gig.event_id % 2 == 0) { gig.favourited = true } if (gig.favourited) {
 						favourites.push(gig)
 					} else {
 						nonFavourites.push(gig)
@@ -57,14 +56,22 @@ function Main() {
 
 
 
-	return < FavouritesDisplay favourites={favourites} updateFavourites={updateFavourites} />
+	return < FavouritesDisplay
+		favourites={favourites}
+		nonFavourites={data}
+		updateFavourites={updateFavourites}
+		updateNonFavourites={updateData}
+	/>
 }
 
 
 
 // Takes the list of favouries gig to display
 function FavouritesDisplay(props) {
-	const { favourites, updateFavourites } = props
+	const {
+		favourites, updateFavourites,
+		nonFavourites, updateNonFavourites
+	} = props
 
 	if (!favourites || favourites.length == 0 || !Array.isArray(favourites)) {
 		console.warn("FavouritesDisplay received an empty from 'props' or invalid Array:", typeof favourites, favourites)
@@ -72,27 +79,72 @@ function FavouritesDisplay(props) {
 	}
 
 	return (
+		<div className="display-body">
+			<div className="display-container">
+				{favourites.map((gig) => (
+					<div key={gig.event_id}>
+						<WholeComponentFavourites
+							gig={gig}
+							favourites={favourites}
+							updateFavourites={updateFavourites}
+							nonFavourites={nonFavourites}
+							updateNonFavourites={updateNonFavourites}
+						/>
+					</div>
+				))}
+			</div>
 
-		<div className="display-container">
-			{favourites.map((gig) => (
-				<div key={gig.event_id}>
-					<WholeComponent gig={gig} favourites={favourites} updateFavourites={updateFavourites} />
-				</div>
-			))}
+
+			<div className="listing-container">
+				{nonFavourites.map((gig) => (
+					<div key={gig.event_id}>
+						<WholeComponentNonFavourites
+							gig={gig}
+							favourites={favourites}
+							updateFavourites={updateFavourites}
+							nonFavourites={nonFavourites}
+							updateNonFavourites={updateNonFavourites}
+						/>
+					</div>
+				))}
+			</div>
+
 		</div>
 	)
 }
 
-
-
-
-
-function WholeComponent(props) {
-	const { gig, favourites, updateFavourites } = props
+function WholeComponentNonFavourites(props) {
+	const { gig, favourites, nonFavourites, updateFavourites, updateNonFavourites } = props
 	let removeEvent = () => {
-		let updated = favourites.filter((favourite) => gig.event_id != favourite.event_id)
-		updateFavourites(updated)
+		let updatedNonFavs = nonFavourites.filter((favourite) => gig.event_id != favourite.event_id)
+		gig.favourited = true
+		updateFavourites([...favourites, gig])
+
+		updateNonFavourites(updatedNonFavs)
 	}
+
+
+	return (
+		<div>
+			<div key={gig.event_id} className="card-container">
+				<Card gig={gig} />
+				<button onClick={removeEvent}>Add to Favorites</button>
+			</div>
+		</div >
+	)
+
+}
+
+function WholeComponentFavourites(props) {
+	const { gig, favourites, nonFavourites, updateFavourites, updateNonFavourites } = props
+	let removeEvent = () => {
+		let updatedFavs = favourites.filter((favourite) => gig.event_id != favourite.event_id)
+		gig.favourited = false
+		updateFavourites(updatedFavs)
+
+		updateNonFavourites([...nonFavourites, gig])
+	}
+
 
 	return (
 		<div>
