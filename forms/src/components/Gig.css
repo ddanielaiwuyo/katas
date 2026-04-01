@@ -47,25 +47,20 @@
 	background-color: lightgrey;
 }
 
-/* .button-container { */
-/* 	display: flex; */
-/* 	gap: 5px; */
-/* } */
-/**/
-/**/
-/* .button-container button{ */
-/* 	all: unset; */
-/* 	padding: 4px; */
-/* 	border: 1px solid black; */
-/* 	border-radius: 5px; */
-/* } */
-
 .card-container button{
 	all: unset;
 	padding: 4px;
+	margin-bottom: 8px;
 	border: 1px solid black;
 	border-radius: 5px;
 	background-color: white;
 	width: fit-content;
 	align-self: center;
+}
+
+
+.card-container button:hover{
+	background-color: black;
+	cursor: pointer;
+	color: white;
 }

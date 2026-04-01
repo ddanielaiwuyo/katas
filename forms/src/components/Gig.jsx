@@ -29,31 +29,36 @@ function Main() {
 	const [favourites, updateFavourites] = useState([])
 
 	useEffect(() => {
-		makeRequest().then(
-			(response) => {
-				const favourites = []
-				const nonFavourites = []
+		setTimeout(() => {
+			makeRequest().then(
+				(response) => {
+					const favourites = []
+					const nonFavourites = []
 
-				response.forEach((gig) => {
-					if (gig.event_id && gig.event_id % 2 == 0) { gig.favourited = true } if (gig.favourited) {
-						favourites.push(gig)
-					} else {
-						nonFavourites.push(gig)
-					}
+					response.forEach((gig) => {
+						if (gig.event_id && gig.event_id % 2 == 0) { gig.favourited = true } if (gig.favourited) {
+							favourites.push(gig)
+						} else {
+							nonFavourites.push(gig)
+						}
+					})
+
+					// for gigs that are not 'favourited'
+					updateData(nonFavourites)
+					updateFavourites(favourites)
+				},
+
+
+				(error) => {
+					console.log("An error occured: Reason:", error)
 				})
-
-				// for gigs that are not 'favourited'
-				updateData(nonFavourites)
-				updateFavourites(favourites)
-			},
-
-
-			(error) => {
-				console.log("An error occured: Reason:", error)
-			})
+		}, 4000)
 	}, []);
 
 
+	if (data.length == 0 && favourites.length == 0) {
+		return <h3>Bear with us...</h3>
+	}
 
 
 	return < FavouritesDisplay
