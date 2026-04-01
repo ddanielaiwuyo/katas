@@ -1,11 +1,6 @@
-// Gig Challenge : https://journey.makers.tech/pages/react-apps-paired-challenges
-// Goal: Contact an API Endpoint, and while theres some latency, display a loading spinner
-// Step 1, lets fetch some endpoint
-
 import { useEffect, useState } from "react"
-import "./Gig.css"
 
-async function make_request() {
+async function makeRequest() {
 	const url = "https://makers-gig-backend.onrender.com/events"
 	const response = await fetch(url)
 	if (response.status != 200) {
@@ -15,91 +10,99 @@ async function make_request() {
 	return await response.json()
 }
 
-
 function Card(props) {
-	const { gig, favourites, updateFavourites } = props
-	if (!gig || !favourites) {
-		throw new ReferenceError(`Props for Card has an undefined value: ${gig}, ${favourites}, ${updateFavourites}`)
-	}
-
-	const handleClick = () => {
-		if (!gig.favorited) {
-			gig.favourited = true
-		}
-		updateFavourites([...favourites, gig])
-	}
-
+	const { gig } = props
 	return (<>
 		<div className="card-container" >
 			<p className="band-name">Band Name: {gig.band_name}</p>
 			<p>{props.gig.description}</p>
 			<p>Time: {new Date(gig.time).toDateString()}</p>
-			<button type="button" onClick={handleClick}>{gig.favourited ? "Remove from Favourties" : "Add to Favourites"}</button>
 		</div>
 	</>)
 }
 
-function Gig() {
-	const [data, setData] = useState([])
+
+function Main() {
+	const [data, updateData] = useState([])
 	const [favourites, updateFavourites] = useState([])
+
 	useEffect(() => {
-		make_request().then(
+		makeRequest().then(
 			(response) => {
-				console.log("response body from server ->", response)
-				const allFavourites = []
+				const favourites = []
 				const nonFavourites = []
+
 				response.forEach((gig) => {
+					if (gig.event_id && gig.event_id % 2 == 0) {
+						gig.favourited = true
+					}
 					if (gig.favourited) {
-						allFavourites.push(gig)
+						favourites.push(gig)
 					} else {
 						nonFavourites.push(gig)
 					}
 				})
 
-				// console.log("all favourties -> ", allFavourites)
-				// console.log("all non -> ", nonFavourites)
-				setData([...nonFavourites])
-				updateFavourites([...allFavourites])
+				// for gigs that are not 'favourited'
+				updateData(nonFavourites)
+				updateFavourites(favourites)
 			},
-			(error) => console.log("Error from server -> ", error)
-		)
-	}, [])
-
-	// <div className="display-container">
-	// 	{favourites.map((gig) => (
-	// 		<Card key={gig.id} gig={gig} updateFavourites={updateFavourites} favourites={favourites} />
-	// 		// <Card key={gig.id} gig={gig} />
-	// 	))}
-	// </div >
-	if (data.length == 0) {
-		return <p>Data is Loading</p>
-	}
-	return (
-		<div>
-			<DisplayContainer favourites={favourites} />
-			<div className="gigs-container">
-				{data.map((gig) => (
-					<Card key={gig.id} gig={gig} updateFavourites={updateFavourites} favourites={favourites} />
-				))}
-			</div >
 
 
-		</div>
+			(error) => {
+				console.log("An error occured: Reason:", error)
+			})
+	}, []);
 
-	)
+
+
+
+	return < FavouritesDisplay favourites={favourites} updateFavourites={updateFavourites} />
 }
 
 
-function DisplayContainer(props) {
-	const { favourites } = props
+
+// Takes the list of favouries gig to display
+function FavouritesDisplay(props) {
+	const { favourites, updateFavourites } = props
+
+	if (!favourites || favourites.length == 0 || !Array.isArray(favourites)) {
+		console.warn("FavouritesDisplay received an empty from 'props' or invalid Array:", typeof favourites, favourites)
+		return (<h3>Add a gig to your Favourties</h3>)
+	}
+
 	return (
+
 		<div className="display-container">
 			{favourites.map((gig) => (
-				<Card key={gig.id} gig={gig} favourites={favourites} />
+				<div key={gig.event_id}>
+					<WholeComponent gig={gig} favourites={favourites} updateFavourites={updateFavourites} />
+				</div>
 			))}
-		</div >
-
-
+		</div>
 	)
 }
-export default Gig
+
+
+
+
+
+function WholeComponent(props) {
+	const { gig, favourites, updateFavourites } = props
+	let removeEvent = () => {
+		let updated = favourites.filter((favourite) => gig.event_id != favourite.event_id)
+		updateFavourites(updated)
+	}
+
+	return (
+		<div>
+			<div key={gig.event_id} className="card-container">
+				<Card gig={gig} />
+				<button onClick={removeEvent}>Remove from Favorites</button>
+			</div>
+		</div >
+	)
+}
+
+export default Main
+
