@@ -1,11 +1,10 @@
-import Form from "./components/Form";
-import makersLogo from "./assets/Makers-Logo.png";
+import Gig from "./components/Gig";
 import "./App.css";
 
 function App() {
 	return (
 		<>
-			<Form />
+		<Gig />
 		</>
 	);
 }
